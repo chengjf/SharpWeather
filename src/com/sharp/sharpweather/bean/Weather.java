@@ -10,6 +10,10 @@ public class Weather {
 	private String wind;
 	// 日期
 	private String date;
+	// 
+	private String day;
+	//
+	private String night;
 	
 	public String getTemperature() {
 		return temperature;
@@ -34,6 +38,18 @@ public class Weather {
 	}
 	public void setDate(String date) {
 		this.date = date;
+	}
+	public String getDay() {
+		return day;
+	}
+	public void setDay(String day) {
+		this.day = day;
+	}
+	public String getNight() {
+		return night;
+	}
+	public void setNight(String night) {
+		this.night = night;
 	}
 	
 	

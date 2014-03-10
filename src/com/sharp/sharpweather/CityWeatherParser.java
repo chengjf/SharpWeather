@@ -7,13 +7,12 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 import org.json.JSONTokener;
 
-import jodd.jerry.Jerry;
 import android.util.Log;
 
 import com.sharp.sharpweather.bean.Result;
@@ -33,8 +32,10 @@ public class CityWeatherParser {
 		try {
 			Log.i(this.getClass().getName(), "Start Connecting......");
 			long t1 = System.currentTimeMillis();
-			url = new URL(GlobalConstant.URL_PATTERN_START + this.cityName
+			url = new URL(GlobalConstant.URL_PATTERN_START
+					+ URLEncoder.encode(this.cityName)
 					+ GlobalConstant.URL_PATTERN_END);
+			Log.i(this.getClass().getName(), URLEncoder.encode(this.cityName));
 			conn = url.openConnection();
 			conn.setRequestProperty("User-Agent",
 					"Mozilla/4.0 (compatible; MSIE 5.0; Windows XP; DigExt)");
@@ -59,43 +60,45 @@ public class CityWeatherParser {
 
 			JSONTokener jsonTokener = new JSONTokener(resultString);
 			JSONObject jsonObject = (JSONObject) jsonTokener.nextValue();
-			
+
 			// 获取是否成功标志
 			String status = jsonObject.getString("status");
 			result.setStatus(status.equals("success") ? true : false);
-			if(status.equals("success")){
+			if (status.equals("success")) {
 				result.setStatus(true);
-			}else{
+			} else {
 				result.setStatus(false);
 				result.setMsg("Please Check Your City's Code!");
 				result.setDetail(status);
 				return result;
 			}
-			
+
 			// 获取查询时日期
 			String date = jsonObject.getString("date");
 			result.setDate(date);
-			
+
 			// 结果
-			JSONObject r = (JSONObject) jsonObject.getJSONArray("results").get(0);
-			
+			JSONObject r = (JSONObject) jsonObject.getJSONArray("results").get(
+					0);
+
 			// 城市
 			String city = r.getString("currentCity");
 			result.setCity(city);
-			
-			// 
-			
+
+			//
+
 			JSONArray wArray = r.getJSONArray("weather_data");
-			for(int i = 0; i < wArray.length(); i++){
+			for (int i = 0; i < wArray.length(); i++) {
 				JSONObject w = wArray.getJSONObject(i);
 				Weather weather = new Weather();
 				weather.setDate(w.getString("date"));
 				weather.setWeather(w.getString("weather"));
 				weather.setWind(w.getString("wind"));
 				weather.setTemperature(w.getString("temperature"));
+				weather.setDay(w.getString("dayPictureUrl").substring(44));
+				weather.setNight(w.getString("nightPictureUrl").substring(46));
 				result.getWeathers().add(weather);
 			}
-			
 
 		} catch (MalformedURLException e) {
 			result.setStatus(false);
@@ -105,7 +108,7 @@ public class CityWeatherParser {
 			result.setStatus(false);
 			result.setMsg("Please Check Your Network!");
 			result.setDetail(e.toString());
-		}  catch (Exception e) {
+		} catch (Exception e) {
 			result.setStatus(false);
 			result.setMsg("Sorry That I Loved Your!");
 			result.setDetail(e.toString());

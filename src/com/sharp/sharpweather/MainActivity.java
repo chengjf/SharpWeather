@@ -4,8 +4,6 @@ import java.net.URLEncoder;
 
 import com.sharp.sharpweather.bean.Result;
 import com.sharp.sharpweather.bean.Weather;
-import com.sharp.sharpweather.util.UtilFactory;
-
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 import android.content.Context;
